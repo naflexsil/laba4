@@ -40,6 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="text files.cs" />
+    <Compile Include="Originator interface.cs" />
+    <Compile Include="Indexator.cs" />
+    <Compile Include="Search for files.cs" />
+    <Compile Include="Editing.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
