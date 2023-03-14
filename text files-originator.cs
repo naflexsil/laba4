@@ -10,7 +10,8 @@ namespace laba4 {
         public List<string> NameFile { get; set; }
     }
 
-    public class Caretaker {
+
+    public class Caretaker {  // ф-я хранения объекта Memento
         private object memento;
         public void SaveState(IOriginator originator) {
             originator.SetMemento(memento);
@@ -21,10 +22,12 @@ namespace laba4 {
         }
     }
 
+
     [Serializable]
     class TextClass : IOriginator {
         public Dictionary<string, string> Content { get; set; }
         public List<string> NameFile { get; set; }
+        public object FileName { get; internal set; }
 
         public TextClass() {
             Content = new Dictionary<string, string>();
@@ -65,16 +68,17 @@ namespace laba4 {
             fs.Close();
         }
 
+
+        // Р А Б О Т А   О Р И Г И Н А Т О Р А
         object IOriginator.GetMemento() {
             return new Memento { Content = this.Content, NameFile = this.NameFile };
         }
-
         void IOriginator.SetMemento(object memento) {
             if (memento is Memento) {
-                var mem = memento as Memento;
-                Content = mem.Content;
-                NameFile = mem.NameFile;
+                var memen = memento as Memento;
+                Content = memen.Content;
+                NameFile = memen.NameFile;
             }
         }
     }
-}
+ }

@@ -4,22 +4,23 @@ using System.IO;
 
 namespace laba4 {
     internal static class Editing {
-        public static void InitiateEdit(string UserPath, string NameFile)  {
-            Console.Write(" ваши действия?\n\n1) изменить текст\n" +
-                "2) запомнить состояние\n3) откатить изменения\n\nвведите номер желаемого действия - ");
+        public static void InitiateEdit(string FilePath, string FileName)  {
+            Console.Write("\n ваши действия?\n\n  | 1) изменить текст\n" +
+                "  | 2) запомнить состояние\n  | 3) откатить изменения\n\n ");
             int YourChoise = 0; int Option = 3;
             while (YourChoise < 1 || YourChoise > Option) {
                 if (int.TryParse(Convert.ToString(Console.ReadLine()), out YourChoise) == false) {
-                    Console.WriteLine("неверно( попробуй еще раз!");
+                    Console.WriteLine(" неверно( попробуй еще раз!");
                 }
             }
 
-            FileStream file = new FileStream(UserPath, FileMode.OpenOrCreate);
+            FileStream file = new FileStream(FilePath, FileMode.OpenOrCreate);
             switch (YourChoise) {
                 case 1:
-                    FileReader(file, NameFile);
+                    FileReader(file, FileName);
                     Console.Clear();
-                    Console.WriteLine(" каким будет новое содержание файла? [ ~ для выхода ]: ");
+                    Console.WriteLine("\n\t -------------------------------------------\n\t |\t  введите желаемый текст!\t   | \n " +
+                        "\t -------------------------------------------\n\t");
                     char choise;
                     int element;
                     string Input = "";
@@ -30,35 +31,37 @@ namespace laba4 {
                             Input += choise;
                         }
                         catch (OverflowException) {
-                            Console.WriteLine($"{element} - неподходящее знач-е");
+                            Console.WriteLine($"{element} - значение неприкольное, мне не нравится");
                             choise = Char.MinValue;
                         }
-                    } while (choise != '~');
-                    FileWriter(Input, UserPath, NameFile);
+                    } while (choise != '\n');
+                    FileWriter(Input, FilePath, FileName);
                     Console.Clear();
-                    Console.WriteLine("изменения внесены!");
+                    Console.WriteLine(" \n\tизменения внесены!");
                     Console.ReadKey();
                     break;
                 case 2:
-                    FileReader(file, NameFile);
+                    FileReader(file, FileName);
                     ct.SaveState(textFile);
                     break;
                 case 3:
                     try {
                         file.Close();
-                        RestoreData(UserPath, NameFile);
+                        RestoreData(FilePath, FileName);
                     }
                     catch (KeyNotFoundException) {
-                        Console.WriteLine("изменений не было!");
+                        Console.WriteLine(" \n\tизменения не внесены!");
                         Console.ReadKey();
                     }
                     break;
             }
             file.Close();
         }
+
         static TextClass textFile = new TextClass();
         static Caretaker ct = new Caretaker();
-        private static void FileReader(FileStream file, string NameFile) {
+
+        private static void FileReader(FileStream file, string FileName) {
             string outString = "";
             var reader = new StreamReader(file);
 
@@ -66,24 +69,25 @@ namespace laba4 {
                 outString += reader.ReadLine();
             }
             try {
-                textFile.Content.Add(NameFile, outString);
-                textFile.NameFile.Add(NameFile);
+                textFile.Content.Add(FileName, outString);
+                textFile.FileName = FileName;
             }
             catch (Exception) {
-                textFile.Content[NameFile] = outString;
+                textFile.Content[FileName] = outString;
             }
             reader.Close();
         }
 
-        private static void FileWriter(string input, string UserPath, string NameFile) {
-            using (StreamWriter writer = new StreamWriter(UserPath, true)) {
+        private static void FileWriter(string input, string FilePath, string FileName) {
+            using (StreamWriter writer = new StreamWriter(FilePath, true)) {
                 writer.Write(input);
             }
         }
-        private static void RestoreData(string UserPath, string NameFile) {
+
+        private static void RestoreData(string FilePath, string FileName) {
             ct.RestoreState(textFile);
-            using (StreamWriter writer = new StreamWriter(UserPath, false)) {
-                writer.Write(textFile.Content[NameFile]);
+            using (StreamWriter writer = new StreamWriter(FilePath, false)) {
+                writer.Write(textFile.Content[FileName]);
             }
         }
     }
